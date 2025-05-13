@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="/flutter_app/">
 
   <meta charset="UTF-8">
@@ -22,6 +9,7 @@
   <meta name="keywords" content="delivery, food delivery, restaurant, flutter, mobile app">
   <meta name="author" content="Fadi">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,7 +22,7 @@
 
   <title>Delivery App - Professional Food Delivery System</title>
   <link rel="manifest" href="manifest.json">
-
+  
   <!-- Loading animation styles -->
   <style>
     .loading {
@@ -68,8 +56,17 @@
   <div class="loading" id="loading">
     <div class="loader"></div>
   </div>
-
+  
   <script>
+    // Fix for base path issues
+    (function() {
+      // Check if we need to adjust paths
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/flutter_app/') && !currentPath.endsWith('/flutter_app')) {
+        window.location.href = '/flutter_app/';
+      }
+    })();
+    
     // Hide loading indicator once Flutter app is loaded
     window.addEventListener('flutter-first-frame', function() {
       var loadingElement = document.getElementById('loading');
@@ -78,14 +75,20 @@
       }
     });
   </script>
-
-  <script src="flutter_bootstrap.js" async></script>
-
+  
+  <script src="main.dart.js" defer></script>
+  
   <!-- Service worker for PWA support -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('flutter_service_worker.js?v=3477281200');
+        navigator.serviceWorker.register('flutter_service_worker.js', {
+          scope: '/flutter_app/'
+        }).then(function (registration) {
+          console.log('Service Worker registered successfully');
+        }).catch(function (error) {
+          console.log('Service Worker registration failed:', error);
+        });
       });
     }
   </script>
